@@ -21,14 +21,47 @@ import {
 } from 'lucide-react';
 import ChessBoard from '../components/ChessBoard';
 import Matchmaking from '../components/Matchmaking';
+import RealtimeMatchmaking from '../components/RealtimeMatchmaking';
+import RealtimeChessGame from '../components/RealtimeChessGame';
+import EconomyStats from '../components/EconomyStats';
+import Leaderboard from '../components/Leaderboard';
+import ApiTest from '../components/ApiTest';
+import ProtectedRoute from '../components/Auth/ProtectedRoute';
+import UserProfile from '../components/UserProfile';
+// import { useAuth } from '../contexts/AuthContext'; // Not used in this component
+import { useSocket } from '../contexts/SocketContext';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('home');
   const [showMatchmaking, setShowMatchmaking] = useState(false);
-  const [showChessBoard, setShowChessBoard] = useState(false);
+  const [showRealtimeMatchmaking, setShowRealtimeMatchmaking] = useState(false);
+  const [currentGame, setCurrentGame] = useState<{
+    gameId: string;
+    opponent: { id: string; username: string };
+    gameType: string;
+    wagerAmount: number;
+    wagerType: string;
+  } | null>(null);
+  const { isConnected } = useSocket();
+
+  const handleMatchFound = (gameData: {
+    gameId: string;
+    opponent: { id: string; username: string };
+    gameType: string;
+    wagerAmount: number;
+    wagerType: string;
+  }) => {
+    console.log('Match found:', gameData);
+    setCurrentGame(gameData);
+    setShowRealtimeMatchmaking(false);
+    setActiveTab('play');
+  };
 
   const navigationItems = [
     { id: 'home', label: 'Home', icon: Home },
+    { id: 'economy', label: 'Economy', icon: Coins },
+    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
+    { id: 'api-test', label: 'API Test', icon: TrendingUp },
     { id: 'play', label: 'Play', icon: Swords },
     { id: 'puzzle', label: 'Puzzle Ladder', icon: Puzzle },
     { id: 'battle', label: 'Battle Royale', icon: Trophy },
@@ -39,8 +72,8 @@ export default function Dashboard() {
   ];
 
   const quickPlayOptions = [
-    { label: 'Token Ladder', icon: Coins, color: 'gold', action: () => setShowMatchmaking(true) },
-    { label: 'Cash Ladder', icon: DollarSign, color: 'emerald', action: () => setShowMatchmaking(true) },
+    { label: 'Token Ladder', icon: Coins, color: 'gold', action: () => setShowRealtimeMatchmaking(true) },
+    { label: 'Cash Ladder', icon: DollarSign, color: 'emerald', action: () => setShowRealtimeMatchmaking(true) },
     { label: 'Puzzle Ladder', icon: Puzzle, color: 'gold', action: () => setActiveTab('puzzle') },
     { label: 'Battle Royale', icon: Swords, color: 'emerald', action: () => setActiveTab('battle') },
   ];
@@ -65,7 +98,8 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="flex h-screen bg-knight-900">
+    <ProtectedRoute>
+      <div className="flex h-screen bg-knight-900">
       {/* Left Sidebar */}
       <div className="w-64 bg-knight-800/50 backdrop-blur-sm border-r border-knight-700/50">
         {/* Logo */}
@@ -154,9 +188,17 @@ export default function Dashboard() {
             <>
               {/* Welcome Banner */}
               <div className="luxury-card p-6 mb-6">
-                <h2 className="text-2xl font-serif font-bold text-gold-500 mb-2">
-                  Welcome back, ChessMaster
-                </h2>
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-2xl font-serif font-bold text-gold-500">
+                    Welcome back, ChessMaster
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400' : 'bg-red-400'}`}></div>
+                    <span className="text-xs text-gray-400">
+                      {isConnected ? 'Connected' : 'Disconnected'}
+                    </span>
+                  </div>
+                </div>
                 <p className="text-knight-300">
                   Ready for your next high-stakes match? Choose your game mode below.
                 </p>
@@ -442,6 +484,19 @@ export default function Dashboard() {
             </div>
           )}
 
+          {/* API Test Tab */}
+          {activeTab === 'economy' && (
+            <EconomyStats />
+          )}
+
+          {activeTab === 'leaderboard' && (
+            <Leaderboard />
+          )}
+
+          {activeTab === 'api-test' && (
+            <ApiTest />
+          )}
+
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div className="luxury-card p-6">
@@ -503,74 +558,100 @@ export default function Dashboard() {
 
       {/* Right Sidebar */}
       <div className="w-80 bg-knight-800/30 backdrop-blur-sm border-l border-knight-700/50 flex flex-col">
-        {/* Team Chat */}
-        <div className="flex-1 p-4 border-b border-knight-700/50">
-          <div className="flex items-center space-x-2 mb-4">
-            <MessageCircle className="w-5 h-5 text-gold-500" />
-            <h3 className="font-semibold text-gold-500">Team Chat</h3>
-          </div>
-          <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-hide">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="bg-knight-700/30 rounded-lg p-3">
-                <div className="flex items-center space-x-2 mb-1">
-                  <span className="text-sm font-medium text-gold-400">Player{i}</span>
-                  <span className="text-xs text-knight-400">2m ago</span>
-                </div>
-                <p className="text-sm text-knight-300">Great game! Ready for the next match?</p>
+        {activeTab === 'profile' ? (
+          <UserProfile />
+        ) : (
+          <>
+            {/* Team Chat */}
+            <div className="flex-1 p-4 border-b border-knight-700/50">
+              <div className="flex items-center space-x-2 mb-4">
+                <MessageCircle className="w-5 h-5 text-gold-500" />
+                <h3 className="font-semibold text-gold-500">Team Chat</h3>
               </div>
-            ))}
-          </div>
-        </div>
+              <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-hide">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="bg-knight-700/30 rounded-lg p-3">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <span className="text-sm font-medium text-gold-400">Player{i}</span>
+                      <span className="text-xs text-knight-400">2m ago</span>
+                    </div>
+                    <p className="text-sm text-knight-300">Great game! Ready for the next match?</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* Friends Online */}
-        <div className="p-4 border-b border-knight-700/50">
-          <div className="flex items-center space-x-2 mb-4">
-            <FriendsIcon className="w-5 h-5 text-emerald-500" />
-            <h3 className="font-semibold text-emerald-500">Friends Online</h3>
-          </div>
-          <div className="space-y-3">
-            {friendsOnline.map((friend, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-3 h-3 rounded-full ${
-                    friend.status === 'online' ? 'bg-emerald-500' : 'bg-gold-500'
-                  }`} />
-                  <span className="text-sm font-medium text-white">{friend.name}</span>
-                  <span className="text-xs text-knight-400">({friend.rank})</span>
-                </div>
-                <button className="text-xs bg-emerald-600 hover:bg-emerald-500 px-2 py-1 rounded transition-colors">
-                  Challenge
-                </button>
+            {/* Friends Online */}
+            <div className="p-4 border-b border-knight-700/50">
+              <div className="flex items-center space-x-2 mb-4">
+                <FriendsIcon className="w-5 h-5 text-emerald-500" />
+                <h3 className="font-semibold text-emerald-500">Friends Online</h3>
               </div>
-            ))}
-          </div>
-        </div>
+              <div className="space-y-3">
+                {friendsOnline.map((friend, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        friend.status === 'online' ? 'bg-emerald-500' : 'bg-gold-500'
+                      }`} />
+                      <span className="text-sm font-medium text-white">{friend.name}</span>
+                      <span className="text-xs text-knight-400">({friend.rank})</span>
+                    </div>
+                    <button className="text-xs bg-emerald-600 hover:bg-emerald-500 px-2 py-1 rounded transition-colors">
+                      Challenge
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* Upcoming Events */}
-        <div className="p-4">
-          <div className="flex items-center space-x-2 mb-4">
-            <Calendar className="w-5 h-5 text-gold-500" />
-            <h3 className="font-semibold text-gold-500">Upcoming Events</h3>
-          </div>
-          <div className="space-y-3">
-            {upcomingEvents.map((event, index) => (
-              <div key={index} className="bg-knight-700/30 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-white">{event.title}</span>
-                  <span className="text-xs text-knight-400">{event.time}</span>
-                </div>
-                <span className={`text-xs px-2 py-1 rounded ${
-                  event.type === 'tournament' ? 'bg-gold-500/20 text-gold-400' :
-                  event.type === 'puzzle' ? 'bg-emerald-500/20 text-emerald-400' :
-                  'bg-knight-500/20 text-knight-400'
-                }`}>
-                  {event.type}
-                </span>
+            {/* Upcoming Events */}
+            <div className="p-4">
+              <div className="flex items-center space-x-2 mb-4">
+                <Calendar className="w-5 h-5 text-gold-500" />
+                <h3 className="font-semibold text-gold-500">Upcoming Events</h3>
               </div>
-            ))}
-          </div>
-        </div>
+              <div className="space-y-3">
+                {upcomingEvents.map((event, index) => (
+                  <div key={index} className="bg-knight-700/30 rounded-lg p-3">
+                    <div className="flex items-centers justify-between mb-1">
+                      <span className="text-sm font-medium text-white">{event.title}</span>
+                      <span className="text-xs text-knight-400">{event.time}</span>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded ${
+                      event.type === 'tournament' ? 'bg-gold-500/20 text-gold-400' :
+                      event.type === 'puzzle' ? 'bg-emerald-500/20 text-emerald-400' :
+                      'bg-knight-500/20 text-knight-400'
+                    }`}>
+                      {event.type}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    </div>
+      </div>
+
+      {/* Matchmaking Components */}
+      {showMatchmaking && (
+        <Matchmaking />
+      )}
+      
+      {showRealtimeMatchmaking && (
+        <RealtimeMatchmaking 
+          onMatchFound={handleMatchFound}
+          onClose={() => setShowRealtimeMatchmaking(false)} 
+        />
+      )}
+
+      {currentGame && (
+        <RealtimeChessGame 
+          gameData={currentGame}
+          onClose={() => setCurrentGame(null)} 
+        />
+      )}
+    </ProtectedRoute>
   );
 }

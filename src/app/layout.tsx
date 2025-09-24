@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "../contexts/AuthContext";
+import { SocketProvider } from "../contexts/SocketContext";
 
 export const metadata: Metadata = {
   title: "Knightfall - High-Stakes Chess Wagering",
@@ -15,7 +17,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-knight-900 text-white min-h-screen">
-        {children}
+        <AuthProvider>
+          <SocketProvider>
+            {children}
+          </SocketProvider>
+        </AuthProvider>
       </body>
     </html>
   );
