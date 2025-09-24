@@ -2,6 +2,39 @@
 
 A cinematic, high-stakes chess wagering app with social features, teams, and tournaments.
 
+## ⚡ Local Development (Frontend + Backend)
+
+Follow these steps to run the full stack locally (frontend on 3000, backend on 3001):
+
+1) Start database services (from the backend folder):
+```bash
+cd /Users/berlin/Desktop/Chess/knightfall-backend
+docker compose up -d
+```
+
+2) Prepare backend env and dependencies:
+```bash
+cd /Users/berlin/Desktop/Chess/knightfall-backend
+cp -n env.example .env || true
+npm install
+npm run dev
+```
+
+3) Start the frontend (in another terminal):
+```bash
+cd /Users/berlin/Desktop/Chess/knightfall
+npm install
+npm run dev
+```
+
+4) Open the app:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
+
+Troubleshooting:
+- If the backend logs show database connection errors, ensure Docker is running and step (1) succeeded: `docker ps` should list the Postgres container.
+- If ports are in use, stop other services or change `PORT` in `knightfall-backend/.env` and restart.
+
 ## 🎯 Vision
 
 Knightfall combines the strategic depth of chess with the excitement of competitive wagering, creating a premium gaming experience with:
