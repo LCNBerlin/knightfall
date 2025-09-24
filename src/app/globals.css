@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    background-color: #0d1117;
+    color: white;
+    background-image: linear-gradient(135deg, #0d1117 0%, #1e293b 50%, #0d1117 100%);
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .luxury-gradient {
+    background: linear-gradient(135deg, #0d1117 0%, #1e293b 50%, #0d1117 100%);
+  }
+  
+  .gold-gradient {
+    background: linear-gradient(135deg, #eab308 0%, #facc15 50%, #eab308 100%);
+  }
+  
+  .emerald-gradient {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #10b981 100%);
+  }
+  
+  .luxury-border {
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.1);
+  }
+  
+  .luxury-card {
+    background-color: rgba(33, 37, 41, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(52, 58, 64, 0.5);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .luxury-button {
+    background: linear-gradient(to right, #ca8a04, #eab308);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+  }
+  
+  .luxury-button:hover {
+    background: linear-gradient(to right, #eab308, #facc15);
+    box-shadow: 0 8px 25px rgba(234, 179, 8, 0.4);
+  }
+  
+  .luxury-button-secondary {
+    background: linear-gradient(to right, #059669, #10b981);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+  
+  .luxury-button-secondary:hover {
+    background: linear-gradient(to right, #10b981, #34d399);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+  }
+  
+  .luxury-input {
+    background-color: rgba(33, 37, 41, 0.5);
+    border: 1px solid rgba(52, 58, 64, 0.5);
+    color: white;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .luxury-input:focus {
+    border-color: #eab308;
+    box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.2);
+    outline: none;
+  }
+  
+  .luxury-input::placeholder {
+    color: #adb5bd;
+  }
+  
+  .chess-board {
+    background: linear-gradient(45deg, #8B4513 25%, transparent 25%), 
+                linear-gradient(-45deg, #8B4513 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #8B4513 75%), 
+                linear-gradient(-45deg, transparent 75%, #8B4513 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+  
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px rgba(234, 179, 8, 0.5);
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .shadow-gold-500\/20 {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+  }
+  
+  .shadow-gold-500\/30 {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+  }
+  
+  .shadow-emerald-500\/20 {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  }
+  
+  .shadow-emerald-500\/30 {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+}
